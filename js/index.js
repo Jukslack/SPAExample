@@ -1,42 +1,45 @@
 var booksJson=null, routesPage=null;
 
-function loadBooksJson(){
-    $.getJSON('./js/books.json').done(function(response){
+function loadInitData(){
+    $.getJSON('./js/books.json').done(function (response){
         booksJson = response;
-    });
-    $.getJSON('./js/routes.json').done(function (response){
-        routesPage = response;
+        loadJsonRoutes();
+    },function(){
+        $.getJSON('./js/books.json').done(function(response){
+            booksJson = response;
+        },function (){
+            router($(window)[0].location);
+        });
     });
 }
 
+function loadJsonBooks(){
+    $.getJSON('./js/books.json').done(function (response){
+        booksJson = response;
+        loadJsonRoutes();
+    });
+}
+
+function loadJsonRoutes(){
+    $.getJSON('./js/routes.json').done(function (response){
+        routesPage = response;
+        loadInitialRoute();
+    });
+}
+
+function loadInitialRoute(){
+    router($(window)[0].location);
+}
+
 $(document).ready(function (){
-    loadBooksJson();
+    loadInitData();
     $("#menuContext").click(function (){
         console.log("click menucontext");
     });
 
-    /* function for load books list*/
-    /*$.ajax({
-        url: "components/list.html",
-        type: "GET",
-        datatype: "text",
-        success: function(response){
-            $("#canvas").html(response);
-        },
-        error: function(error){
-            console.log(error);
-        },
-        complete: function(xhr, status){
-            console.log(status);
-        }
-    });*/
-
-    router($(window)[0].location);
-
     $(window).on("hashchange", function (e){
         let event = e.originalEvent;
         let hash = event.newURL.split("#")[1];
-        //loadContent(hash);
         loadContentDinamyc(hash);
     });
 });
@@ -44,37 +47,26 @@ $(document).ready(function (){
 function router (window){
     let location = window;
     let hash = location.hash.split("#")[1];
-    //loadContent(hash);
     loadContentDinamyc(hash);
 }
 
-/*function loadContent (hash){
-    $.getJSON('./js/routes.json').done(function (response){
-        response.map(function(data){
-            if(location.hash == "" && data.path == "/"){
-                getContent("./components/"+data.component);
-            }
-            else if(hash == data.path){
-                getContent("./components/"+data.component);
-            }
-        });
-    });
-}*/
-
 function loadContentDinamyc (hash){
-    if(routesPage==null) {
+    if(routesPage==null || hash == null) {
         getContent("./components/empty.html");
     }
     else{
         var command=emptyComand();
         routesPage.forEach(data => {
-            if(hash == data.path){
-                command = buildCommand(data);
+            if(hash.indexOf(data.path)>-1){
+                command = buildCommand(data, hash);
             }
         });
 
         if(command["action"] == "list"){
-            paintBooksJson();
+            paintBooksJson(command);
+        }
+        else if(command['action'] == "detail"){
+            paintBook(command);
         }
         else{
             getContent("./components/empty.html");
@@ -89,18 +81,22 @@ function emptyComand(){
     return command;
 }
 
-function buildCommand(data){
+function buildCommand(data, hash){
     var command= new Array();
     
     if(data.path.substring(1,5) == "list")
     {
         command["action"]="list";
         command["parameter"] =null;
+        command["template"] ="item.html";
+        command["showShortData"]=true;
     }
     else if(data.path.substring(1,7) == "detail")
     {
         command["action"]="detail";
-        command["parameter"] =null;
+        command["parameter"] =hash.substring(8);
+        command["template"] ="itemdetail.html";
+        command["showShortData"]=false;
     }
     else {
         command = emptyComand();
@@ -126,24 +122,34 @@ function getContent(url){
     });
 }
 
-function paintBooksJson(){
+function paintBook(command){
     $("#canvas").html("<br/>");
+    let template = loadTemplate(command["template"]);
     booksJson.items.forEach(element => {
-        parseItem2Html(element);
+        if(element.id == command["parameter"]){
+            printItem(element, command, template);
+        }
     });
 }
 
-function parseItem2Html(item){
+function paintBooksJson(command){
+    $("#canvas").html("<br/>");
+    let template = loadTemplate(command["template"]);
+    booksJson.items.forEach(element => {
+        printItem(element, command, template);
+    });
+}
+
+function loadTemplate(template)
+{
+    var dataTemplate;
     $.ajax({
-        url: "./components/item.html",
+        url: "./components/"+template,
         type: "GET",
         datatype: "text",
+        async: false,
         success: function(response){
-            response = response.replace("##TITLE##",item.volumeInfo.title);
-            response = response.replace("##IMGURL##",item.volumeInfo.imageLinks.thumbnail);
-            response = response.replace("##DATA##",cutText(item.volumeInfo.description));
-            response = response.replace("##IDBOOK##",getData(item.id));
-            $("#canvas").append("<div>"+response+"</div>");
+            dataTemplate = response;
         },
         error: function(error){
             console.log(error);
@@ -152,6 +158,17 @@ function parseItem2Html(item){
             console.log(status);
         }
     });
+    return dataTemplate;
+}
+
+function printItem(item, command, template){
+    var response = template.slice(0);
+    response = response.replace("##TITLE##",item.volumeInfo.title);
+    response = response.replace("##IMGURL##",item.volumeInfo.imageLinks.thumbnail);
+    if(command["showShortData"]) response = response.replace("##DATA##",cutText(item.volumeInfo.description));
+    else response = response.replace("##DATA##",getData(item.volumeInfo.description));
+    response = response.replace("##IDBOOK##",getData(item.id));
+    $("#canvas").append("<div>"+response+"</div>");
 }
 
 let MAX_SIZE=100;
