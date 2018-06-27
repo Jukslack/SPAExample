@@ -1,0 +1,14 @@
+[
+    {
+        "path" : "/",
+        "component": "empty.html"
+    },
+    {
+        "path" : "/list",
+        "component": "list.html"
+    },
+    {
+        "path" : "/detail",
+        "component": "detail.html"
+    }
+]

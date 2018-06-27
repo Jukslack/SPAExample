@@ -1,0 +1,157 @@
+*{
+    box-sizing: border-box;
+  }
+  body {
+    width: 100%;
+    margin: 0;
+  }
+  
+  p {
+    text-align: justify
+  }
+  
+  header {
+    width: 100%;
+    position: fixed;
+    z-index: 100;
+    background-color: black;
+    height: 50px;
+    color: white;
+    display: table;
+  }
+  
+  header > div {
+    vertical-align: middle;
+  }
+  
+  ul{
+    margin: 0;
+    padding: 0;
+  }
+  
+  header .rigth-header {
+    float: right;
+    margin: 0 10px;
+  }
+  
+  .rigth-header > i {
+    float: right;
+    margin-top: 18px;
+  }
+  
+  .rigth-header > form{
+    float: right;
+    margin: 0 10px 0 0;
+  }
+  
+  header .left-header {
+    float: left;
+    margin: 0 10px;
+  }
+  
+  header > div{
+    line-height: 50px;
+  }
+  
+  #content{
+    width: 100%;
+    height: 100px;
+  }
+
+  #content > .menuLeftClose  > section > a::content   {
+    display: none;
+  }
+  
+  #content > .menuLeft {
+    height: 100%;
+    border-right: 1px solid black;
+    position: fixed;
+    top: 0px;
+    padding-top: 50px;
+  }
+  #content > .menuLeft > nav {
+    margin: 30px 0;
+  }
+  
+  .menuLeft > section > div {
+    padding: 4px 4px;
+    background-color: gray;
+    width: 100%;
+  }
+  
+  .dropbtn{
+    margin-left: 10px;
+  }
+  
+  .navigationBar{
+    margin: 0 20px;
+  }
+  
+  #content > .container{
+    float: left;
+    padding: 80px 0px 0px 150px;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .bigicon{
+    font-size: 3em;
+    text-align: left;
+  }
+  
+  .left-header > ul li{
+    list-style-type: none;
+    overflow: hidden;
+  }
+  
+  .menuLeft > section > nav{
+    margin: 20px;
+  }
+  
+  .menuLeft > section > nav ul li{
+    list-style-type: none;
+    overflow: hidden;
+  }
+  
+  .menuLeft  > section > a, a:link, a:visited, a:hover, a:active {
+    text-decoration: none;
+    color: black;
+  }
+  
+  #canvas{
+    display: flex;
+    flex-wrap: wrap;
+    height: 300px;
+  }
+  
+  #canvas > div{
+    width: 500px;
+    min-width: 200px;
+  }
+  
+  #canvas > div > aside {
+    margin: 20px 20px;
+    padding: 10px 10px;
+    box-shadow: 8px 5px 20px;
+    min-height: 450px;
+  }
+  
+  #canvas > div > aside > article > p {
+    padding: 20px 20px;
+  }
+  
+  #canvas > div > aside >article > img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /*#canvas > div > aside >article > button{
+    background-color: #cc6600;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    background: linear-gradient(to right,rgba(0, 0, 0,1.0), rgba(255, 255, 255,0.0));
+  }*/
