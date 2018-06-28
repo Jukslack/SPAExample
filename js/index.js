@@ -125,11 +125,10 @@ function getContent(url){
 function paintBook(command){
     $("#canvas").html("<br/>");
     let template = loadTemplate(command["template"]);
-    booksJson.items.forEach(element => {
-        if(element.id == command["parameter"]){
-            printItem(element, command, template);
-        }
+    let book = booksJson.items.find(function(item){
+        return item.id == command["parameter"]
     });
+    printItem(book, command, template);
 }
 
 function paintBooksJson(command){
