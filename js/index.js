@@ -63,10 +63,12 @@ function loadContentDinamyc (hash){
         });
 
         if(command["action"] == "list"){
-            paintBooksJson(command);
+            //paintBooksJson(command);
+            paintBooksJsonRactive(command);
         }
         else if(command['action'] == "detail"){
-            paintBook(command);
+            //paintBook(command);
+            paintBookRactive(command);
         }
         else{
             getContent("./components/empty.html");
@@ -88,14 +90,14 @@ function buildCommand(data, hash){
     {
         command["action"]="list";
         command["parameter"] =null;
-        command["template"] ="item.html";
+        command["template"] ="ractive/item.html";
         command["showShortData"]=true;
     }
     else if(data.path.substring(1,7) == "detail")
     {
         command["action"]="detail";
         command["parameter"] =hash.substring(8);
-        command["template"] ="itemdetail.html";
+        command["template"] ="ractive/itemdetail.html";
         command["showShortData"]=false;
     }
     else {
@@ -122,6 +124,22 @@ function getContent(url){
     });
 }
 
+function paintBookRactive(command){
+    $("#canvas").html("<br/>");
+    let template = loadTemplate(command["template"]);
+    let book = booksJson.items.find(function(item){
+        return item.id == command["parameter"]
+    });
+    //printItem(book, command, template);
+    var response = template.slice(0);
+    $("#canvas").append(response);
+    ractive = new Ractive({
+        target: '#canvas',
+        template: '#template',
+        data:  {book}
+      });
+}
+/*
 function paintBook(command){
     $("#canvas").html("<br/>");
     let template = loadTemplate(command["template"]);
@@ -130,14 +148,27 @@ function paintBook(command){
     });
     printItem(book, command, template);
 }
+*/
 
-function paintBooksJson(command){
+function paintBooksJsonRactive(command){
+    $("#canvas").html("<br/>");
+    let template = loadTemplate(command["template"]);
+    var response = template.slice(0);
+    $("#canvas").append(response);
+    ractive = new Ractive({
+        target: '#canvas',
+        template: '#template',
+        data:  {books: booksJson.items}
+      });
+}
+
+/*function paintBooksJson(command){
     $("#canvas").html("<br/>");
     let template = loadTemplate(command["template"]);
     booksJson.items.forEach(element => {
         printItem(element, command, template);
     });
-}
+}*/
 
 function loadTemplate(template)
 {
@@ -159,7 +190,7 @@ function loadTemplate(template)
     });
     return dataTemplate;
 }
-
+/*
 function printItem(item, command, template){
     var response = template.slice(0);
     response = response.replace("##TITLE##",item.volumeInfo.title);
@@ -168,7 +199,7 @@ function printItem(item, command, template){
     else response = response.replace("##DATA##",getData(item.volumeInfo.description));
     response = response.replace("##IDBOOK##",getData(item.id));
     $("#canvas").append("<div>"+response+"</div>");
-}
+}*/
 
 let MAX_SIZE=100;
 

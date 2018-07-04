@@ -1,0 +1,17 @@
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+{{#each books}}
+<div>
+<aside>
+    <article>
+      <h3>{{volumeInfo.title}}</h3>
+      <hr>
+      <img src="{{volumeInfo.imageLinks.thumbnail}}" />
+      <!--<p>{{volumeInfo.description}}</p>-->
+      <a class="btn btn-lg btn-success" href="#/detail/{{id}}">Ver detalle</a>
+    </article>
+</aside>
+</div>
+{{/each}}
+</script>
