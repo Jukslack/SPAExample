@@ -1,3 +1,5 @@
+import "../css/styles.css"
+
 var booksJson=null, routesPage=null;
 
 function loadInitData(){
