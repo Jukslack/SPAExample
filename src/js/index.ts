@@ -1,13 +1,16 @@
 import "../css/styles.css"
+import Ractive from "ractive/ractive.min.js"
+import * as $ from "jquery"
 
-var booksJson=null, routesPage=null;
+var booksJson=null;
+var routesPage=null;
 
 function loadInitData(){
-    $.getJSON('./js/books.json').done(function (response){
+    $.getJSON('data/books.json').done(function (response){
         booksJson = response;
         loadJsonRoutes();
     },function(){
-        $.getJSON('./js/books.json').done(function(response){
+        $.getJSON('data/books.json').done(function(response){
             booksJson = response;
         },function (){
             router($(window)[0].location);
@@ -15,15 +18,8 @@ function loadInitData(){
     });
 }
 
-function loadJsonBooks(){
-    $.getJSON('./js/books.json').done(function (response){
-        booksJson = response;
-        loadJsonRoutes();
-    });
-}
-
 function loadJsonRoutes(){
-    $.getJSON('./js/routes.json').done(function (response){
+    $.getJSON('data/routes.json').done(function (response){
         routesPage = response;
         loadInitialRoute();
     });
@@ -54,7 +50,7 @@ function router (window){
 
 function loadContentDinamyc (hash){
     if(routesPage==null || hash == null) {
-        getContent("./components/empty.html");
+        getContent("components/empty.html");
     }
     else{
         var command=emptyComand();
@@ -73,7 +69,7 @@ function loadContentDinamyc (hash){
             paintBookRactive(command);
         }
         else{
-            getContent("./components/empty.html");
+            getContent("components/empty.html");
         }
     }
 }
@@ -92,14 +88,14 @@ function buildCommand(data, hash){
     {
         command["action"]="list";
         command["parameter"] =null;
-        command["template"] ="ractive/item.html";
+        command["template"] ="item.html";
         command["showShortData"]=true;
     }
     else if(data.path.substring(1,7) == "detail")
     {
         command["action"]="detail";
         command["parameter"] =hash.substring(8);
-        command["template"] ="ractive/itemdetail.html";
+        command["template"] ="itemdetail.html";
         command["showShortData"]=false;
     }
     else {
@@ -132,51 +128,32 @@ function paintBookRactive(command){
     let book = booksJson.items.find(function(item){
         return item.id == command["parameter"]
     });
-    //printItem(book, command, template);
     var response = template.slice(0);
     $("#canvas").append(response);
-    ractive = new Ractive({
+    var ractive = new Ractive({
         target: '#canvas',
         template: '#template',
         data:  {book}
       });
 }
-/*
-function paintBook(command){
-    $("#canvas").html("<br/>");
-    let template = loadTemplate(command["template"]);
-    let book = booksJson.items.find(function(item){
-        return item.id == command["parameter"]
-    });
-    printItem(book, command, template);
-}
-*/
 
 function paintBooksJsonRactive(command){
     $("#canvas").html("<br/>");
     let template = loadTemplate(command["template"]);
     var response = template.slice(0);
     $("#canvas").append(response);
-    ractive = new Ractive({
+    var ractive = new Ractive({
         target: '#canvas',
         template: '#template',
         data:  {books: booksJson.items}
       });
 }
 
-/*function paintBooksJson(command){
-    $("#canvas").html("<br/>");
-    let template = loadTemplate(command["template"]);
-    booksJson.items.forEach(element => {
-        printItem(element, command, template);
-    });
-}*/
-
 function loadTemplate(template)
 {
     var dataTemplate;
     $.ajax({
-        url: "./components/"+template,
+        url: "components/"+template,
         type: "GET",
         datatype: "text",
         async: false,
@@ -192,16 +169,6 @@ function loadTemplate(template)
     });
     return dataTemplate;
 }
-/*
-function printItem(item, command, template){
-    var response = template.slice(0);
-    response = response.replace("##TITLE##",item.volumeInfo.title);
-    response = response.replace("##IMGURL##",item.volumeInfo.imageLinks.thumbnail);
-    if(command["showShortData"]) response = response.replace("##DATA##",cutText(item.volumeInfo.description));
-    else response = response.replace("##DATA##",getData(item.volumeInfo.description));
-    response = response.replace("##IDBOOK##",getData(item.id));
-    $("#canvas").append("<div>"+response+"</div>");
-}*/
 
 let MAX_SIZE=100;
 
